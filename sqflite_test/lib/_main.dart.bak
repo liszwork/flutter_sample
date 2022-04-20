@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_test/user_data.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'sqflite test',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyHomePage(title: 'sqflite test'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  Database? _database;
+  final String dbName = 'sqflite_test.db';
+  final String tableName = 'user_data';
+  int id = 0x0001;
+  final controllerName = TextEditingController();
+  final controllerAge = TextEditingController();
+
+  Future<Database?> get database async {
+    if (_database != null) {
+      return _database;
+    }
+    // DBがない場合作成
+    _database = await initDB();
+    return _database;
+  }
+
+  Future<Database> initDB() async {
+    print('connection db');
+    return await openDatabase(
+      join(await getDatabasesPath(), dbName),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, name TEXT, age INTEGER)',
+        );
+      },
+      version: 1,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextFormField(
+              controller: controllerName,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Name',
+              ),
+            ),
+            TextFormField(
+              controller: controllerAge,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Age',
+              ),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  String name = controllerName.text;
+                  int age = int.parse(controllerAge.text);
+                  UserData userdata = UserData(id: id, name: name, age: age);
+                  final Database db = database as Database;
+                  db.insert(
+                    tableName, // TABLE名っぽい
+                    userdata.toMap(),
+                    conflictAlgorithm: ConflictAlgorithm.replace,
+                  );
+                  print('insert db');
+                  // clear text
+                  controllerName.text = '';
+                  controllerAge.text = '';
+                },
+                child: const Text('insert'))
+          ],
+        ),
+      ),
+    );
+  }
+}
