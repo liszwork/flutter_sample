@@ -1,16 +1,40 @@
 # sqflite_test
 
-A new Flutter project.
+sqfliteを使ったDBアクセスのサンプルです。
 
-## Getting Started
+## 操作方法
 
-This project is a starting point for a Flutter application.
+### データの追加
 
-A few resources to get you started if this is your first Flutter project:
+1. Nameに名前(文字列)を入力
+1. Ageに歳(数値)を入力
+1. Insertボタンを押す
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+DBにデータが登録されて、画面下部の一覧が更新されます。
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 一覧のクリア
+
+1. Clear displayボタンを押す
+
+画面下部の一覧が消えます(DBからデータは消えません)。
+
+### DBから全データを消す
+
+1. All delete DB datasボタンを押す
+
+DBから全データが消え、画面下部の一覧が更新されます(消える)。
+
+### 特定IDのデータを削除
+
+1. IDに消したいID(数値)を入力
+1. Delete IDボタンを押す
+
+DBから指定したIDのデータが消え、画面下部の一覧が更新されます。
+
+### DBからデータを読み出し
+
+1. Restoreボタンを押す
+
+DBに登録されているデータを全て読み込み、画面下部の一覧を更新します。
+
+一覧のクリア後に行った後以外は、目に見えた効果はありません。
